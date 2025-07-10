@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test Authentication</title>
+  </head>
+  <body>
+    <h1>Test Authentication</h1>
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="testBoards()">Test Boards API</button>
+    <div id="result"></div>
+
+    <script>
+      const API_BASE_URL = "http://localhost:5000";
+
+      async function testLogin() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: "demo@kanban.com",
+              password: "demo123",
+            }),
+          });
+
+          const data = await response.json();
+          localStorage.setItem("token", data.token);
+          document.getElementById(
+            "result"
+          ).innerHTML = `Login successful! Token: ${data.token.substring(
+            0,
+            50
+          )}...`;
+        } catch (error) {
+          document.getElementById(
+            "result"
+          ).innerHTML = `Login failed: ${error}`;
+        }
+      }
+
+      async function testBoards() {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(`${API_BASE_URL}/api/boards`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const data = await response.json();
+          document.getElementById(
+            "result"
+          ).innerHTML = `Boards: ${JSON.stringify(data, null, 2)}`;
+        } catch (error) {
+          document.getElementById(
+            "result"
+          ).innerHTML = `Boards API failed: ${error}`;
+        }
+      }
+    </script>
+  </body>
+</html>

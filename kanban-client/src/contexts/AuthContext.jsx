@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
+import api, { authAPI } from "../utils/api";
 
 const AuthContext = createContext();
 
@@ -18,15 +18,6 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem("token"));
 
-  // Configure axios default headers
-  useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    } else {
-      delete axios.defaults.headers.common["Authorization"];
-    }
-  }, [token]);
-
   // Check if user is logged in on app start
   useEffect(() => {
     const checkAuth = async () => {
@@ -34,12 +25,11 @@ export const AuthProvider = ({ children }) => {
       if (savedToken) {
         try {
           setToken(savedToken);
-          axios.defaults.headers.common[
-            "Authorization"
-          ] = `Bearer ${savedToken}`;
 
           // Verify token is still valid by making a request
-          const response = await axios.get(`${API_BASE_URL}/api/boards`);
+          await api.get("/api/boards");
+          // If we get here, the token is valid but we need to get user info
+          // For now, we'll just trust the token is valid
           setLoading(false);
         } catch (error) {
           console.error("Token validation failed:", error);
@@ -55,17 +45,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
-        email,
-        password,
-      });
+      const response = await authAPI.login(email, password);
 
       const { user: userData, token: userToken } = response.data;
 
       setUser(userData);
       setToken(userToken);
       localStorage.setItem("token", userToken);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${userToken}`;
 
       return { success: true };
     } catch (error) {
@@ -79,18 +65,13 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/auth/register`, {
-        name,
-        email,
-        password,
-      });
+      const response = await authAPI.register(name, email, password);
 
       const { user: userData, token: userToken } = response.data;
 
       setUser(userData);
       setToken(userToken);
       localStorage.setItem("token", userToken);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${userToken}`;
 
       return { success: true };
     } catch (error) {
@@ -106,7 +87,6 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setToken(null);
     localStorage.removeItem("token");
-    delete axios.defaults.headers.common["Authorization"];
   };
 
   const value = {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import axios from "axios";
+import { boardAPI } from "../utils/api";
 
 const Dashboard = () => {
   const [boards, setBoards] = useState([]);
@@ -21,7 +21,7 @@ const Dashboard = () => {
   const fetchBoards = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5000/api/boards");
+      const response = await boardAPI.getAll();
       setBoards(response.data);
     } catch (error) {
       console.error("Error fetching boards:", error);
@@ -37,7 +37,7 @@ const Dashboard = () => {
 
     try {
       setCreating(true);
-      const response = await axios.post("http://localhost:5000/api/boards", {
+      const response = await boardAPI.create({
         title: newBoardTitle.trim(),
       });
 

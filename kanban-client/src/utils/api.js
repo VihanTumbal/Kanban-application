@@ -7,12 +7,42 @@ const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
+// Add request interceptor to include auth token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to handle auth errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Clear invalid token
+      localStorage.removeItem("token");
+      // Redirect to login if not already there
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Board API functions
 export const boardAPI = {
   getAll: () => api.get("/api/boards"),
-  create: (title) => api.post("/api/boards", { title }),
+  create: (data) => api.post("/api/boards", data),
   getById: (id) => api.get(`/api/boards/${id}`),
-  update: (id, data) => api.put(`/api/boards/${id}`, data),
+  update: (id, data) => api.patch(`/api/boards/${id}`, data),
   delete: (id) => api.delete(`/api/boards/${id}`),
 };
 
@@ -20,7 +50,7 @@ export const boardAPI = {
 export const listAPI = {
   getByBoard: (boardId) => api.get(`/api/lists/board/${boardId}`),
   create: (title, boardId) => api.post("/api/lists", { title, boardId }),
-  update: (id, data) => api.put(`/api/lists/${id}`, data),
+  update: (id, data) => api.patch(`/api/lists/${id}`, data),
   delete: (id) => api.delete(`/api/lists/${id}`),
 };
 
@@ -28,7 +58,7 @@ export const listAPI = {
 export const cardAPI = {
   getByList: (listId) => api.get(`/api/cards/list/${listId}`),
   create: (data) => api.post("/api/cards", data),
-  update: (id, data) => api.put(`/api/cards/${id}`, data),
+  update: (id, data) => api.patch(`/api/cards/${id}`, data),
   delete: (id) => api.delete(`/api/cards/${id}`),
 };
 

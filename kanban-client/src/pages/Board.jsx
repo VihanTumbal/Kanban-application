@@ -187,29 +187,70 @@ const Board = () => {
     }
   };
 
-  const moveCard = async (cardId, sourceListId, targetListId, targetIndex) => {
+  const moveCard = async (
+    cardId,
+    sourceListId,
+    targetListId,
+    targetCardId = null
+  ) => {
     try {
-      // Update the card's listId on the backend
+      // First, update the card's listId on the backend
       await cardAPI.update(cardId, { listId: targetListId });
 
       // Optimistically update the UI
       setLists((prevLists) => {
-        const newLists = [...prevLists];
+        const newLists = prevLists.map((list) => ({
+          ...list,
+          cards: [...list.cards],
+        }));
 
         // Find source and target lists
-        const sourceList = newLists.find((list) => list._id === sourceListId);
-        const targetList = newLists.find((list) => list._id === targetListId);
+        const sourceListIndex = newLists.findIndex(
+          (list) => list._id === sourceListId
+        );
+        const targetListIndex = newLists.findIndex(
+          (list) => list._id === targetListId
+        );
+
+        if (sourceListIndex === -1 || targetListIndex === -1) {
+          console.error("Source or target list not found");
+          return prevLists;
+        }
+
+        const sourceList = newLists[sourceListIndex];
+        const targetList = newLists[targetListIndex];
 
         // Find and remove the card from source list
         const cardIndex = sourceList.cards.findIndex(
           (card) => card._id === cardId
         );
+
+        if (cardIndex === -1) {
+          console.error("Card not found in source list");
+          return prevLists;
+        }
+
         const [movedCard] = sourceList.cards.splice(cardIndex, 1);
 
         // Update the card's listId
         movedCard.listId = targetListId;
 
-        // Insert the card into target list at the specified index
+        // Find target position
+        let targetIndex;
+        if (targetCardId) {
+          // Insert before the target card
+          targetIndex = targetList.cards.findIndex(
+            (card) => card._id === targetCardId
+          );
+          if (targetIndex === -1) {
+            targetIndex = targetList.cards.length; // Add to end if target card not found
+          }
+        } else {
+          // Add to end of list
+          targetIndex = targetList.cards.length;
+        }
+
+        // Insert the card into target list at the calculated position
         targetList.cards.splice(targetIndex, 0, movedCard);
 
         return newLists;
@@ -413,10 +454,10 @@ const Board = () => {
 };
 
 // Draggable Card Component
-const DraggableCard = ({ card, listId, index, onEditCard, onDeleteCard }) => {
+const DraggableCard = ({ card, listId, onEditCard, onDeleteCard }) => {
   const [{ isDragging }, drag] = useDrag({
     type: "card",
-    item: { id: card._id, listId, index },
+    item: { id: card._id, listId },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -481,12 +522,12 @@ const DraggableCard = ({ card, listId, index, onEditCard, onDeleteCard }) => {
 };
 
 // Drop Zone Component for precise card positioning
-const DropZone = ({ listId, index, onMoveCard }) => {
+const DropZone = ({ listId, beforeCardId, onMoveCard }) => {
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: "card",
     drop: (item) => {
-      if (item.listId !== listId || item.index !== index) {
-        onMoveCard(item.id, item.listId, listId, index);
+      if (item.listId !== listId || item.beforeCardId !== beforeCardId) {
+        onMoveCard(item.id, item.listId, listId, beforeCardId);
       }
     },
     collect: (monitor) => ({
@@ -528,7 +569,8 @@ const ListColumn = ({
       }
 
       if (item.listId !== list._id) {
-        onMoveCard(item.id, item.listId, list._id, list.cards.length);
+        // Move to end of list (no beforeCardId)
+        onMoveCard(item.id, item.listId, list._id, null);
       }
     },
     collect: (monitor) => ({
@@ -565,19 +607,22 @@ const ListColumn = ({
 
         {/* Cards */}
         <div className="space-y-1 mb-4">
-          <DropZone listId={list._id} index={0} onMoveCard={onMoveCard} />
+          <DropZone
+            listId={list._id}
+            beforeCardId={null}
+            onMoveCard={onMoveCard}
+          />
           {list.cards.map((card, index) => (
             <React.Fragment key={card._id}>
               <DraggableCard
                 card={card}
                 listId={list._id}
-                index={index}
                 onEditCard={onEditCard}
                 onDeleteCard={onDeleteCard}
               />
               <DropZone
                 listId={list._id}
-                index={index + 1}
+                beforeCardId={list.cards[index + 1]?._id || null}
                 onMoveCard={onMoveCard}
               />
             </React.Fragment>
