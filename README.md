@@ -15,6 +15,7 @@ A full-stack Kanban board application built with the MERN stack, featuring drag-
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **React** - UI library
 - **Vite** - Build tool and dev server
 - **TailwindCSS** - Utility-first CSS framework
@@ -23,6 +24,7 @@ A full-stack Kanban board application built with the MERN stack, featuring drag-
 - **React DnD** - Drag and drop functionality (planned)
 
 ### Backend
+
 - **Node.js** - Runtime environment
 - **Express.js** - Web framework
 - **MongoDB** - NoSQL database
@@ -55,6 +57,7 @@ Kanban Application/
 ## 🚦 Getting Started
 
 ### Prerequisites
+
 - Node.js (v16 or higher)
 - MongoDB (local or cloud instance)
 - Git
@@ -62,16 +65,19 @@ Kanban Application/
 ### Backend Setup
 
 1. Navigate to the server directory:
+
    ```bash
    cd kanban-server
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Create a `.env` file with the following variables:
+
    ```env
    MONGODB_URI=your_mongodb_connection_string
    PORT=5000
@@ -88,11 +94,13 @@ The server will run on `http://localhost:5000`
 ### Frontend Setup
 
 1. Navigate to the client directory:
+
    ```bash
    cd kanban-client
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -107,10 +115,12 @@ The client will run on `http://localhost:5173`
 ## 📡 API Endpoints
 
 ### Authentication
+
 - `POST /api/auth/register` - Register a new user
 - `POST /api/auth/login` - Login user
 
 ### Boards
+
 - `GET /api/boards` - Get all user boards
 - `POST /api/boards` - Create a new board
 - `GET /api/boards/:id` - Get board by ID
@@ -118,12 +128,14 @@ The client will run on `http://localhost:5173`
 - `DELETE /api/boards/:id` - Delete board
 
 ### Lists
+
 - `GET /api/lists/board/:boardId` - Get lists for a board
 - `POST /api/lists` - Create a new list
 - `PUT /api/lists/:id` - Update list
 - `DELETE /api/lists/:id` - Delete list
 
 ### Cards
+
 - `GET /api/cards/list/:listId` - Get cards for a list
 - `POST /api/cards` - Create a new card
 - `PUT /api/cards/:id` - Update card
@@ -132,6 +144,7 @@ The client will run on `http://localhost:5173`
 ## 🧪 Testing
 
 Run the API tests:
+
 ```bash
 cd kanban-server
 node test-api.js
@@ -140,10 +153,12 @@ node test-api.js
 ## 🚀 Deployment
 
 ### Backend Deployment
+
 - Deploy to platforms like Heroku, Railway, or DigitalOcean
 - Ensure environment variables are set in production
 
 ### Frontend Deployment
+
 - Build the production version: `npm run build`
 - Deploy to platforms like Vercel, Netlify, or GitHub Pages
 
@@ -162,6 +177,7 @@ This project is licensed under the MIT License.
 ## 👨‍💻 Author
 
 **Vihan Tumbal**
+
 - GitHub: [@VihanTumbal](https://github.com/VihanTumbal)
 
 ## Features
