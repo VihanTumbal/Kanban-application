@@ -26,10 +26,9 @@ export const AuthProvider = ({ children }) => {
         try {
           setToken(savedToken);
 
-          // Verify token is still valid by making a request
-          await api.get("/api/boards");
-          // If we get here, the token is valid but we need to get user info
-          // For now, we'll just trust the token is valid
+          // Verify token and get user profile
+          const userResponse = await api.get("/api/auth/profile");
+          setUser(userResponse.data.user);
           setLoading(false);
         } catch (error) {
           console.error("Token validation failed:", error);

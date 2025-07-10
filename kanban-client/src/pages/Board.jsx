@@ -307,43 +307,74 @@ const Board = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-600">Loading board...</div>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: "#F9FAFB" }}
+      >
+        <div className="flex flex-col items-center space-y-4">
+          <div className="relative">
+            <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin"></div>
+            <div
+              className="absolute inset-0 w-12 h-12 border-4 border-transparent border-r-secondary-400 rounded-full animate-spin"
+              style={{
+                animationDirection: "reverse",
+                animationDuration: "1.5s",
+              }}
+            ></div>
+          </div>
+          <div className="text-textSecondary font-medium">
+            Loading your board...
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200">
+        <header className="backdrop-blur-md bg-white/80 border-b border-white/20 shadow-lg shadow-slate-200/50 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between py-4">
-              <div className="flex items-center">
+              <div className="flex items-center space-x-4">
                 <button
                   onClick={() => navigate("/dashboard")}
-                  className="mr-4 text-gray-500 hover:text-gray-700"
+                  className="group flex items-center space-x-2 px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-white/60 rounded-lg transition-all duration-200 ease-in-out"
                 >
-                  ← Back to Dashboard
+                  <svg
+                    className="w-4 h-4 transition-transform group-hover:-translate-x-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                    />
+                  </svg>
+                  <span className="font-medium">Dashboard</span>
                 </button>
-                <h1 className="text-xl font-semibold text-gray-900">
+                <div className="h-6 w-px bg-slate-300"></div>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                   Board View
                 </h1>
               </div>
 
               {/* Search and Filter */}
-              <div className="flex items-center space-x-4">
-                <div className="relative">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                <div className="relative group flex-1 sm:flex-none">
                   <input
                     type="text"
                     placeholder="Search cards..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="pl-10 pr-4 py-2.5 w-full sm:w-64 bg-white/60 backdrop-blur-sm border border-white/30 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300 ease-in-out placeholder-slate-400"
                   />
                   <svg
-                    className="absolute left-2 top-2.5 h-4 w-4 text-gray-400"
+                    className="absolute left-3 top-3 h-5 w-5 text-slate-400 transition-colors group-focus-within:text-blue-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -355,12 +386,31 @@ const Board = () => {
                       d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                     />
                   </svg>
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm("")}
+                      className="absolute right-3 top-3 h-5 w-5 text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                      <svg
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  )}
                 </div>
 
                 <select
                   value={filterBy}
                   onChange={(e) => setFilterBy(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="px-4 py-2.5 bg-white/60 backdrop-blur-sm border border-white/30 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300 ease-in-out text-slate-700"
                 >
                   <option value="all">All Cards</option>
                   <option value="due-soon">Due Soon</option>
@@ -374,43 +424,69 @@ const Board = () => {
         {/* Error Display */}
         {error && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
-              {error}
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl shadow-sm animate-slide-down">
+              <div className="flex items-center space-x-2">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
+                </svg>
+                <span>{error}</span>
+              </div>
             </div>
           </div>
         )}
 
         {/* Board Content */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex space-x-6 overflow-x-auto pb-6">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex space-x-6 overflow-x-auto pb-6 min-h-[calc(100vh-200px)] scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
             {/* Existing Lists */}
-            {filteredLists.map((list) => (
-              <ListColumn
+            {filteredLists.map((list, index) => (
+              <div
                 key={list._id}
-                list={list}
-                onCreateCard={createCard}
-                onMoveCard={moveCard}
-                onEditCard={editCard}
-                onDeleteCard={deleteCard}
-                onDeleteList={deleteList}
-              />
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <ListColumn
+                  list={list}
+                  onCreateCard={createCard}
+                  onMoveCard={moveCard}
+                  onEditCard={editCard}
+                  onDeleteCard={deleteCard}
+                  onDeleteList={deleteList}
+                />
+              </div>
             ))}
 
             {/* Add List Column */}
-            <div className="flex-shrink-0 w-80">
+            <div
+              className="flex-shrink-0 w-80 animate-fade-in-up"
+              style={{ animationDelay: `${filteredLists.length * 100}ms` }}
+            >
               {showCreateList ? (
-                <div className="bg-white rounded-lg p-4 shadow-sm border">
+                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
                   <form onSubmit={createList}>
                     <input
                       type="text"
                       placeholder="Enter list title"
-                      className="input-field mb-3"
+                      className="w-full px-4 py-3 bg-white/60 border border-white/30 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300 placeholder-slate-400"
                       value={newListTitle}
                       onChange={(e) => setNewListTitle(e.target.value)}
                       autoFocus
                     />
-                    <div className="flex space-x-2">
-                      <button type="submit" className="btn-primary text-sm">
+                    <div className="flex space-x-3 mt-4">
+                      <button
+                        type="submit"
+                        className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl shadow-md hover:from-blue-600 hover:to-blue-700 hover:shadow-lg transform hover:scale-105 transition-all duration-200 font-medium"
+                      >
                         Add List
                       </button>
                       <button
@@ -419,7 +495,7 @@ const Board = () => {
                           setShowCreateList(false);
                           setNewListTitle("");
                         }}
-                        className="btn-secondary text-sm"
+                        className="px-4 py-2 text-slate-600 hover:text-slate-800 hover:bg-white/60 rounded-xl transition-all duration-200"
                       >
                         Cancel
                       </button>
@@ -429,9 +505,24 @@ const Board = () => {
               ) : (
                 <button
                   onClick={() => setShowCreateList(true)}
-                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-4 rounded-lg transition-colors duration-200 border-2 border-dashed border-gray-300"
+                  className="w-full p-6 bg-white/40 backdrop-blur-sm border-2 border-dashed border-slate-300 rounded-2xl text-slate-600 hover:text-slate-800 hover:border-slate-400 hover:bg-white/60 transition-all duration-300 group"
                 >
-                  + Add another list
+                  <div className="flex items-center justify-center space-x-2">
+                    <svg
+                      className="w-5 h-5 transition-transform group-hover:scale-110"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
+                    </svg>
+                    <span className="font-medium">Add another list</span>
+                  </div>
                 </button>
               )}
             </div>
@@ -465,57 +556,88 @@ const DraggableCard = ({ card, listId, onEditCard, onDeleteCard }) => {
 
   // Determine card status color based on due date
   const getCardStatusColor = () => {
-    if (!card.dueDate) return "";
+    if (!card.dueDate) return "border-l-4 border-slate-300";
 
     const now = new Date();
     const dueDate = new Date(card.dueDate);
     const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
 
     if (dueDate < now) {
-      return "border-l-4 border-red-500"; // Overdue
+      return "border-l-4 border-red-400 bg-gradient-to-r from-red-50 to-white"; // Overdue
     } else if (dueDate <= threeDaysFromNow) {
-      return "border-l-4 border-yellow-500"; // Due soon
+      return "border-l-4 border-yellow-400 bg-gradient-to-r from-yellow-50 to-white"; // Due soon
     } else {
-      return "border-l-4 border-green-500"; // Future
+      return "border-l-4 border-green-400 bg-gradient-to-r from-green-50 to-white"; // Future
     }
   };
 
   return (
     <div
       ref={drag}
-      className={`bg-white p-3 rounded-lg shadow-sm border cursor-pointer hover:shadow-md transition-shadow duration-200 group ${
-        isDragging ? "opacity-50" : ""
+      className={`bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-md border border-white/20 cursor-pointer hover:shadow-xl transition-all duration-300 group transform hover:scale-105 ${
+        isDragging ? "opacity-40 rotate-2 scale-105 shadow-2xl z-50" : ""
       } ${getCardStatusColor()}`}
       onClick={() => onEditCard(card)}
     >
       <div className="flex justify-between items-start">
-        <h4 className="font-medium text-gray-900 flex-1">{card.title}</h4>
+        <h4 className="font-semibold text-slate-800 flex-1 leading-tight">
+          {card.title}
+        </h4>
         <button
           onClick={(e) => {
             e.stopPropagation();
             onDeleteCard(card._id, listId);
           }}
-          className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all duration-200"
+          className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 hover:bg-red-50 p-1 rounded-lg transition-all duration-200 ml-2"
         >
-          ×
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            />
+          </svg>
         </button>
       </div>
       {card.description && (
-        <p className="text-gray-600 text-sm mt-1">{card.description}</p>
+        <p className="text-slate-600 text-sm mt-2 line-clamp-2">
+          {card.description}
+        </p>
       )}
       {card.dueDate && (
-        <p
-          className={`text-xs mt-2 ${
-            new Date(card.dueDate) < new Date()
-              ? "text-red-600 font-medium"
-              : new Date(card.dueDate) <=
-                new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000)
-              ? "text-yellow-600 font-medium"
-              : "text-gray-500"
-          }`}
-        >
-          Due: {new Date(card.dueDate).toLocaleDateString()}
-        </p>
+        <div className="flex items-center space-x-2 mt-3">
+          <svg
+            className="w-4 h-4 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+          <p
+            className={`text-xs font-medium px-2 py-1 rounded-full ${
+              new Date(card.dueDate) < new Date()
+                ? "text-red-700 bg-red-100"
+                : new Date(card.dueDate) <=
+                  new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000)
+                ? "text-yellow-700 bg-yellow-100"
+                : "text-green-700 bg-green-100"
+            }`}
+          >
+            {new Date(card.dueDate).toLocaleDateString()}
+          </p>
+        </div>
       )}
     </div>
   );
@@ -539,10 +661,10 @@ const DropZone = ({ listId, beforeCardId, onMoveCard }) => {
   return (
     <div
       ref={drop}
-      className={`transition-all duration-200 ${
+      className={`transition-all duration-300 ease-out ${
         isOver && canDrop
-          ? "h-8 bg-blue-100 border-2 border-blue-300 border-dashed rounded-lg"
-          : "h-2"
+          ? "h-8 bg-gradient-to-r from-blue-100 to-purple-100 border-2 border-blue-400 border-dashed rounded-xl shadow-lg transform scale-105"
+          : "h-2 hover:h-4 bg-transparent hover:bg-slate-100/50 rounded-lg"
       }`}
     />
   );
@@ -590,23 +712,45 @@ const ListColumn = ({
   return (
     <div ref={drop} className="flex-shrink-0 w-80">
       <div
-        className={`bg-gray-100 rounded-lg p-4 ${
-          isOver ? "bg-blue-50 border-2 border-blue-300 border-dashed" : ""
+        className={`bg-white/60 backdrop-blur-sm rounded-2xl p-5 shadow-lg border border-white/20 transition-all duration-300 hover:shadow-xl ${
+          isOver
+            ? "bg-gradient-to-br from-blue-50/80 to-purple-50/80 border-blue-300 shadow-2xl transform scale-105"
+            : ""
         }`}
       >
         {/* List Header */}
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-medium text-gray-900">{list.title}</h3>
+        <div className="flex justify-between items-center mb-5">
+          <div className="flex items-center space-x-3">
+            <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full"></div>
+            <h3 className="font-semibold text-slate-800 text-lg">
+              {list.title}
+            </h3>
+            <span className="bg-slate-200 text-slate-600 text-xs px-2 py-1 rounded-full font-medium">
+              {list.cards.length}
+            </span>
+          </div>
           <button
             onClick={() => onDeleteList(list._id)}
-            className="text-gray-400 hover:text-red-500 transition-colors duration-200"
+            className="text-slate-400 hover:text-red-500 hover:bg-red-50 p-1 rounded-lg transition-all duration-200 group"
           >
-            ×
+            <svg
+              className="w-4 h-4 transition-transform group-hover:scale-110"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
           </button>
         </div>
 
         {/* Cards */}
-        <div className="space-y-1 mb-4">
+        <div className="space-y-2 mb-5 min-h-[100px]">
           <DropZone
             listId={list._id}
             beforeCardId={null}
@@ -614,12 +758,17 @@ const ListColumn = ({
           />
           {list.cards.map((card, index) => (
             <React.Fragment key={card._id}>
-              <DraggableCard
-                card={card}
-                listId={list._id}
-                onEditCard={onEditCard}
-                onDeleteCard={onDeleteCard}
-              />
+              <div
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <DraggableCard
+                  card={card}
+                  listId={list._id}
+                  onEditCard={onEditCard}
+                  onDeleteCard={onDeleteCard}
+                />
+              </div>
               <DropZone
                 listId={list._id}
                 beforeCardId={list.cards[index + 1]?._id || null}
@@ -627,41 +776,79 @@ const ListColumn = ({
               />
             </React.Fragment>
           ))}
+          {list.cards.length === 0 && (
+            <div className="text-center py-8 text-slate-400">
+              <svg
+                className="w-12 h-12 mx-auto mb-2 opacity-50"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1}
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                />
+              </svg>
+              <p className="text-sm">No cards yet</p>
+            </div>
+          )}
         </div>
 
         {/* Add Card */}
         {showCreateCard ? (
-          <form onSubmit={handleCreateCard}>
-            <textarea
-              placeholder="Enter a title for this card..."
-              className="input-field mb-2 resize-none"
-              rows="3"
-              value={newCardTitle}
-              onChange={(e) => setNewCardTitle(e.target.value)}
-              autoFocus
-            />
-            <div className="flex space-x-2">
-              <button type="submit" className="btn-primary text-sm">
-                Add Card
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowCreateCard(false);
-                  setNewCardTitle("");
-                }}
-                className="btn-secondary text-sm"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow-sm">
+            <form onSubmit={handleCreateCard}>
+              <textarea
+                placeholder="Enter a title for this card..."
+                className="w-full px-3 py-2 bg-white/60 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 resize-none transition-all duration-300 placeholder-slate-400"
+                rows="3"
+                value={newCardTitle}
+                onChange={(e) => setNewCardTitle(e.target.value)}
+                autoFocus
+              />
+              <div className="flex space-x-2 mt-3">
+                <button
+                  type="submit"
+                  className="flex-1 px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg shadow-md hover:from-blue-600 hover:to-blue-700 hover:shadow-lg transform hover:scale-105 transition-all duration-200 font-medium text-sm"
+                >
+                  Add Card
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCreateCard(false);
+                    setNewCardTitle("");
+                  }}
+                  className="px-3 py-2 text-slate-600 hover:text-slate-800 hover:bg-white/60 rounded-lg transition-all duration-200 text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
         ) : (
           <button
             onClick={() => setShowCreateCard(true)}
-            className="w-full text-left text-gray-600 hover:text-gray-800 py-2 px-3 rounded hover:bg-gray-200 transition-colors duration-200"
+            className="w-full p-3 text-slate-600 hover:text-slate-800 hover:bg-white/60 rounded-xl transition-all duration-200 group border border-dashed border-slate-300 hover:border-slate-400"
           >
-            + Add a card
+            <div className="flex items-center justify-center space-x-2">
+              <svg
+                className="w-4 h-4 transition-transform group-hover:scale-110"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
+              </svg>
+              <span className="font-medium text-sm">Add a card</span>
+            </div>
           </button>
         )}
       </div>
@@ -699,15 +886,27 @@ const CardModal = ({ card, isOpen, onClose, onSave }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Edit Card</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            ×
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
           </button>
         </div>
 
@@ -738,7 +937,21 @@ const CardModal = ({ card, isOpen, onClose, onSave }) => {
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Assign to User (Optional)
+            </label>
+            <input
+              type="email"
+              placeholder="Enter user email to assign"
+              className="input-field"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Feature coming soon - user assignment
+            </p>
+          </div>
+
+          <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Due Date
             </label>
@@ -748,6 +961,25 @@ const CardModal = ({ card, isOpen, onClose, onSave }) => {
               onChange={(e) => setDueDate(e.target.value)}
               className="input-field"
             />
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Attachments
+            </label>
+            <input
+              type="file"
+              multiple
+              onChange={(e) => {
+                // Handle file selection
+                console.log("Files selected:", e.target.files);
+              }}
+              className="input-field"
+              accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Supported formats: Images, PDF, Word documents
+            </p>
           </div>
 
           <div className="flex space-x-3">
