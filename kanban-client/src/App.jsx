@@ -1,15 +1,20 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import Board from './pages/Board';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import Board from "./pages/Board";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -17,14 +22,14 @@ const ProtectedRoute = ({ children }) => {
       </div>
     );
   }
-  
+
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
 // Public Route Component (redirect to dashboard if already authenticated)
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -32,7 +37,7 @@ const PublicRoute = ({ children }) => {
       </div>
     );
   }
-  
+
   return !isAuthenticated ? children : <Navigate to="/dashboard" />;
 };
 
@@ -44,7 +49,7 @@ function App() {
           <Routes>
             {/* Redirect root to dashboard */}
             <Route path="/" element={<Navigate to="/dashboard" />} />
-            
+
             {/* Public routes */}
             <Route
               path="/login"
@@ -62,7 +67,7 @@ function App() {
                 </PublicRoute>
               }
             />
-            
+
             {/* Protected routes */}
             <Route
               path="/dashboard"
@@ -80,7 +85,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            
+
             {/* Catch all - redirect to dashboard */}
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>
