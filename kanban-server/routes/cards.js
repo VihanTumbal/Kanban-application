@@ -168,7 +168,7 @@ router.delete("/:id", auth, async (req, res) => {
       return res.status(404).json({ message: "Board not found" });
     }
 
-    await card.remove();
+    await Card.findByIdAndDelete(req.params.id);
     res.json({ message: "Card deleted successfully" });
   } catch (error) {
     res

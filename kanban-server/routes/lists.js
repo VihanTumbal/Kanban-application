@@ -103,7 +103,7 @@ router.delete("/:id", auth, async (req, res) => {
       return res.status(404).json({ message: "Board not found" });
     }
 
-    await list.remove();
+    await List.findByIdAndDelete(req.params.id);
     res.json({ message: "List deleted successfully" });
   } catch (error) {
     res
