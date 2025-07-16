@@ -1,4 +1,4 @@
-# Kanban Application (MERN Stack)
+# TaskFlow - Modern Kanban Application
 
 A full-stack Kanban board application built with the MERN stack, featuring drag-and-drop functionality, user authentication, and real-time collaboration.
 
